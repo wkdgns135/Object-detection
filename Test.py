@@ -1,6 +1,7 @@
 import cv2
+from fileRead import file_read
 
-img = cv2.imread("101_ObjectCategories/accordion/image_0001.jpg")
+train_data, test_data = file_read("ant")
 
-cv2.imshow("Test", img)
+cv2.imshow("train", test_data[1])
 cv2.waitKey(0)
