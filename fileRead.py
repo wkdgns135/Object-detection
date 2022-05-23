@@ -1,3 +1,4 @@
+import cv2
 import os
 
 def file_read(category):
