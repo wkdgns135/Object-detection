@@ -7,12 +7,13 @@ def file_read(category):
     train_img = []
     test_img = []
     i = 0
+    
     for name in fileName:
         if(i < 30):
             train_img.append(cv2.imread("101_ObjectCategories/"+category+"/" + name))
         else:
             test_img.append(cv2.imread("101_ObjectCategories/"+category+"/" + name))
-        i+=1    
+        i+=1
 
     return train_img, test_img
     
