@@ -66,7 +66,6 @@ def Training():
         with open(svm_file, 'wb') as f: 
             pickle.dump(svm, f)
 
-
 def ClassifyData():
     # args = build_arg_parser().parse_args() 
     # svm_file = args.svm_file 
@@ -78,3 +77,6 @@ def ClassifyData():
  
     tag = ImageClassifier(svm_file, codebook_file).getImageTag(input_image)
     print("Output class:", tag)
+
+if __name__ == "__main__":
+    
