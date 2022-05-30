@@ -32,23 +32,3 @@ class ImageClassifier(object):
         image_tag = self.svm.classify(feature_vector) 
  
         return image_tag 
-
-
-def build_arg_parser(): 
-    parser = argparse.ArgumentParser(description='Extracts features from each line and classifies the data') 
-    parser.add_argument("--input-image", dest="input_image", required=True,\
-        help="Input image to be classified") 
-    parser.add_argument("--svm-file", dest="svm_file", required=True,\
-        help="File containing the trained SVM model") 
-    parser.add_argument("--codebook-file", dest="codebook_file", required=True,\
-        help="File containing the codebook") 
-    return parser 
- 
-if __name__=='__main__': 
-    args = build_arg_parser().parse_args() 
-    svm_file = args.svm_file 
-    codebook_file = args.codebook_file 
-    input_image = cv2.imread(args.input_image) 
- 
-    tag = ImageClassifier(svm_file, codebook_file).getImageTag(input_image)
-    print("Output class:", tag)

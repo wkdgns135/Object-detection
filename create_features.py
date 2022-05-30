@@ -69,6 +69,7 @@ class Quantizer(object):
     def get_feature_vector(self, img, kmeans, centroids): 
         kps = DenseDetector().detect(img) 
         kps, fvs = self.extractor.compute(img, kps) 
+        fvs = np.array(fvs, dtype=np.double)
         labels = kmeans.predict(fvs) 
         fv = np.zeros(self.num_clusters) 
  
@@ -121,18 +122,6 @@ class FeatureExtractor(object):
     def get_feature_vector(self, img, kmeans, centroids): 
         return Quantizer().get_feature_vector(img, kmeans, centroids) 
  
- 
-def build_arg_parser(): 
-    parser = argparse.ArgumentParser(description='Creates features for given images')
-    parser.add_argument("--samples", dest="cls", nargs="+", action="append", required=True,\
-        help="Folders containing the training images.\nThe first element needs to be the class label.") 
-    parser.add_argument("--codebook-file", dest='codebook_file', required=True, 
-        help="Base file name to store the codebook") 
-    parser.add_argument("--feature-map-file", dest='feature_map_file', required=True,\
-        help="Base file name to store the feature map") 
- 
-    return parser 
- 
 # Loading the images from the input folder 
 def load_input_map(label, input_folder): 
     combined_data = [] 
@@ -178,28 +167,3 @@ def resize_to_size(input_image, new_size=150):
     new_size = (int(w * ds_factor), int(h * ds_factor)) 
     return cv2.resize(input_image, new_size) 
  
-if __name__=='__main__': 
-    args = build_arg_parser().parse_args() 
- 
-    input_map = [] 
-    for cls in args.cls:
-        assert len(cls) >= 2, "Format for classes is `<label> file`" 
-        label = cls[0] 
-        input_map += load_input_map(label, cls[1]) 
- 
-    # Building the codebook 
-    print("===== Building codebook =====")
-    kmeans, centroids = FeatureExtractor().get_centroids(input_map) 
-    if args.codebook_file: 
-        with open(args.codebook_file, 'wb') as f: 
-            print('kmeans', kmeans)
-            print('centroids', centroids)
-            pickle.dump((kmeans, centroids), f) 
- 
-    # Input data and labels 
-    print("===== Building feature map =====")
-    feature_map = extract_feature_map(input_map, kmeans, 
-     centroids) 
-    if args.feature_map_file: 
-        with open(args.feature_map_file, 'wb') as f: 
-            pickle.dump(feature_map, f)
