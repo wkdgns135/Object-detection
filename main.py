@@ -1,10 +1,12 @@
-from objectDetection import *
 from create_features import *
 from training import *
 from classify_data import *
 
-def CreateFeatures():
-    CLS = [['chair','101_ObjectCategories/chair'],['ant','101_ObjectCategories/ant']]
+def CreateFeatures(categorys):
+    CLS = []
+    for category in categorys:
+        CLS.append([category, '101_ObjectCategories/'+category])
+
     codebook_file = "model/cb.pkl"
     feature_map_file = "model/fm.pkl"
 
@@ -32,13 +34,8 @@ def CreateFeatures():
             pickle.dump(feature_map, f)
 
 def Training():
-        # args = build_arg_parser().parse_args() 
-
     svm_file = "model/svm.pkl"
     feature_map_file = "model/fm.pkl"
-
-    # feature_map_file = args.feature_map_file 
-    # svm_file = args.svm_file 
  
     # Load the feature map 
     with open(feature_map_file, 'rb') as f: 
@@ -58,25 +55,31 @@ def Training():
     # Train the SVM 
     svm = ClassifierTrainer(X, labels_words) 
 
-    # if args.svm_file: 
-    #     with open(args.svm_file, 'wb') as f: 
-    #         pickle.dump(svm, f) 
-
     if svm_file: 
         with open(svm_file, 'wb') as f: 
             pickle.dump(svm, f)
 
-def ClassifyData():
-    # args = build_arg_parser().parse_args() 
-    # svm_file = args.svm_file 
-    # codebook_file = args.codebook_file 
+def ClassifyData(img):
     svm_file = "model/svm.pkl"
     codebook_file = "model/cb.pkl"
-    input_image_file = "101_ObjectCategories/ant/image_0041.jpg"
-    input_image = cv2.imread(input_image_file) 
+    input_image = cv2.imread(img) 
  
     tag = ImageClassifier(svm_file, codebook_file).getImageTag(input_image)
-    print("Output class:", tag)
+    # print("Output class:", tag)
+    return tag
 
 if __name__ == "__main__":
+    categorys = ["ant", "chair", "bass"]
+    # CreateFeatures(categorys)
+    # Training()
     
+    for category in categorys:
+        fileName = os.listdir("101_ObjectCategories/" + category)
+
+        score = 0
+        for name in fileName:
+            tag = ClassifyData("101_ObjectCategories/"+category+"/" +name)
+            if(category == tag):
+                score+=1
+
+        print(category,"accuracy:",score / len(fileName))
