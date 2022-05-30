@@ -14,7 +14,7 @@ def CreateFeatures(categorys):
     for cls in CLS:
         assert len(cls) >= 2, "Format for classes is `<label> file`" 
         label = cls[0] 
-        input_map += load_input_map(label, cls[1]) 
+        input_map += load_input_map(label, cls[1])
     
     # Building the codebook 
     print("===== Building codebook =====")
@@ -23,7 +23,7 @@ def CreateFeatures(categorys):
         with open(codebook_file, 'wb') as f: 
             print('kmeans', kmeans)
             print('centroids', centroids)
-            pickle.dump((kmeans, centroids), f) 
+            pickle.dump((kmeans, centroids), f)
  
     # Input data and labels 
     print("===== Building feature map =====")
@@ -69,11 +69,12 @@ def ClassifyData(img):
     return tag
 
 if __name__ == "__main__":
-    categorys = ["ant", "chair", "bass"]
+    categories = ["ant", "chair", "bass"]
+    # If categories is change need restart this functions
     # CreateFeatures(categorys)
     # Training()
     
-    for category in categorys:
+    for category in categories:
         fileName = os.listdir("101_ObjectCategories/" + category)
 
         score = 0
@@ -81,5 +82,4 @@ if __name__ == "__main__":
             tag = ClassifyData("101_ObjectCategories/"+category+"/" +name)
             if(category == tag):
                 score+=1
-
         print(category,"accuracy:",score / len(fileName))
