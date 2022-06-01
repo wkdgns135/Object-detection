@@ -1,17 +1,33 @@
+import pandas as pd
 from obejct_classifier import *
 
-if __name__ == "__main__":
-    categories = ["ant", "chair", "bass"]
-    oc = object_classifier(categories)
-    oc.fit()
+def train_test_split(categories, n = 30):
+    train_x = []
+    train_y = []
+    test_x = []
+    test_y = []
 
     for category in categories:
         fileName = os.listdir("101_ObjectCategories/" + category)
-
-        score = 0
+        count = 0
         for name in fileName:
             img = cv2.imread("101_ObjectCategories/"+category+"/" +name)
-            tag = oc.predict(img)
-            if(category == tag):
-                score+=1
-        print(category,"accuracy:",score / len(fileName))
+            if(count < n):
+                train_x.append(img)
+                train_y.append(category)
+                count+=1
+            else:
+                test_x.append(img)
+                test_y.append(category)
+
+    return train_x, test_x, train_y, test_y
+
+if __name__ == "__main__":
+    categories = ["ant", "chair", "bass","crab","emu"]
+
+    train_x, test_x, train_y, test_y = train_test_split(categories, n=30)
+
+    oc = object_classifier()
+    oc.fit(train_x, train_y)
+    print(oc.predict(test_x[66]))
+    print(oc.score(test_x, test_y))

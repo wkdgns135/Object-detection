@@ -90,68 +90,47 @@ class FeatureExtractor(object):
         return fvs 
  
     # Extract the centroids from the feature points 
-    def get_centroids(self, input_map, num_samples_to_fit=10): 
+    def get_centroids(self, X, Y, num_samples_to_fit=10): 
         kps_all = [] 
- 
         count = 0 
-        cur_label = '' 
-        for item in input_map: 
-            if count >= num_samples_to_fit: 
-                if cur_label != item['label']: 
-                    count = 0 
-                else: 
-                    continue 
- 
-            count += 1 
- 
-            if count == num_samples_to_fit: 
-                print("Built centroids for", item['label'])
- 
-            cur_label = item['label'] 
-            img = cv2.imread(item['image']) 
-            img = resize_to_size(img, 150) 
- 
-            num_dims = 128 
-            fvs = self.extract_image_features(img) 
-            kps_all.extend(fvs) 
- 
+        cur_label = ''
+        for x, y in zip(X, Y):
+            if count >= num_samples_to_fit:
+                if cur_label != y:
+                    count = 0
+                else :
+                    continue
+            count += 1
+
+            if count == num_samples_to_fit:
+                print("Built centroids for", y)
+
+            cur_label = y
+            x = resize_to_size(x, 150)
+
+            num_dims = 128
+            fvs = self.extract_image_features(x)
+            kps_all.extend(fvs)
+
         kmeans, centroids = Quantizer().quantize(kps_all) 
         return kmeans, centroids 
  
     def get_feature_vector(self, img, kmeans, centroids): 
         return Quantizer().get_feature_vector(img, kmeans, centroids) 
  
-# Loading the images from the input folder 
-def load_input_map(label, input_folder): 
-    combined_data = [] 
  
-    if not os.path.isdir(input_folder): 
-        raise IOError("The folder " + input_folder + " doesn't exist") 
- 
-    # Parse the input folder and assign the  labels 
-    for root, dirs, files in os.walk(input_folder): 
-        for filename in (x for x in files if x.endswith('.jpg')): 
-            combined_data.append({'label': label, 'image': 
-             os.path.join(root, filename)}) 
- 
-    return combined_data 
- 
-def extract_feature_map(input_map, kmeans, centroids): 
+def extract_feature_map(X, Y, kmeans, centroids): 
     feature_map = [] 
- 
-    for item in input_map: 
+    
+    for x, y in zip(X, Y):
         temp_dict = {} 
-        temp_dict['label'] = item['label'] 
- 
-        # print("Extracting features for", item['image'])
-        img = cv2.imread(item['image']) 
-        img = resize_to_size(img, 150) 
- 
-        temp_dict['feature_vector'] = FeatureExtractor().get_feature_vector(img, kmeans, centroids) 
- 
+        temp_dict['label'] = y
+        
+        x = resize_to_size(x, 150)
+
+        temp_dict['feature_vector'] = FeatureExtractor().get_feature_vector(x, kmeans, centroids) 
         if temp_dict['feature_vector'] is not None: 
             feature_map.append(temp_dict) 
- 
     return feature_map 
  
 # Resize the shorter dimension to 'new_size' 
