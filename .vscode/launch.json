@@ -9,7 +9,6 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["--samples 101_ObjectCategories/ant", "--codebook-file cb.pkl", "--feature-map-file svm.pkl"],
             "console": "integratedTerminal",
             "justMyCode": true
         }

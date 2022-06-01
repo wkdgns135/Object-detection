@@ -35,6 +35,5 @@ class ClassifierTrainer(object):
     # Classify the input datapoint 
     def classify(self, X): 
         labels_nums = self._fit(X) 
-        labels_words = self.le.inverse_transform([int(x) for x in 
-         labels_nums]) 
+        labels_words = self.le.inverse_transform([int(x) for x in labels_nums]) 
         return labels_words 
