@@ -143,7 +143,7 @@ def extract_feature_map(input_map, kmeans, centroids):
         temp_dict = {} 
         temp_dict['label'] = item['label'] 
  
-        print("Extracting features for", item['image'])
+        # print("Extracting features for", item['image'])
         img = cv2.imread(item['image']) 
         img = resize_to_size(img, 150) 
  

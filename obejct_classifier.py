@@ -22,8 +22,8 @@ class object_classifier():
 
         feature_map = extract_feature_map(input_map, self.kmeans, self.centroids) 
     
-        labels_words = [x['label'] for x in feature_map] 
-        dim_size = feature_map[0]['feature_vector'].shape[1] 
+        labels_words = [x['label'] for x in feature_map]
+        dim_size = feature_map[0]['feature_vector'].shape[1]
     
         X = [np.reshape(x['feature_vector'], (dim_size,)) for x in feature_map] 
         
