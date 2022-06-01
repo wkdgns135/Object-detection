@@ -1,7 +1,6 @@
 import os 
 import sys 
 import argparse 
-import _pickle as pickle 
  
 import cv2 
 import numpy as np 
@@ -11,14 +10,12 @@ from training import ClassifierTrainer
  
 # Classifying an image 
 class ImageClassifier(object): 
-    def __init__(self, svm_file, codebook_file): 
+    def __init__(self, svm, kmeans, centroids): 
         # Load the SVM classifier 
-        with open(svm_file, 'rb') as f: 
-            self.svm = pickle.load(f) 
+        self.svm = svm
  
         # Load the codebook 
-        with open(codebook_file, 'rb') as f: 
-            self.kmeans, self.centroids = pickle.load(f) 
+        self.kmeans, self.centroids = kmeans, centroids
  
     # Method to get the output image tag 
     def getImageTag(self, img): 

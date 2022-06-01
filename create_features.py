@@ -1,7 +1,6 @@
 import os 
 import sys 
 import argparse 
-import _pickle as pickle 
 import json 
  
 import cv2 

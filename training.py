@@ -1,8 +1,6 @@
 import os 
 import sys 
 import argparse 
- 
-import _pickle as pickle
 import numpy as np 
 from sklearn.multiclass import OneVsOneClassifier 
 from sklearn.svm import LinearSVC 
