@@ -26,8 +26,12 @@ if __name__ == "__main__":
     categories = ["ant", "chair", "bass","crab","emu"]
 
     train_x, test_x, train_y, test_y = train_test_split(categories, n=30)
-
-    oc = object_classifier()
+    
+    oc = object_classifier(C=1)
     oc.fit(train_x, train_y)
-    print(oc.predict(test_x[66]))
-    print(oc.score(test_x, test_y))
+    print(oc.get_params())
+    # for c in range(1,100):
+    #     oc.fit(train_x, train_y)
+    #     # print(oc.predict(test_x[66]))
+    #     print(c,oc.score(test_x, test_y))
+        

@@ -90,11 +90,11 @@ class FeatureExtractor(object):
         return fvs 
  
     # Extract the centroids from the feature points 
-    def get_centroids(self, X, Y, num_samples_to_fit=10): 
+    def get_centroids(self, data, target, num_samples_to_fit=10): 
         kps_all = [] 
         count = 0 
         cur_label = ''
-        for x, y in zip(X, Y):
+        for x, y in zip(data, target):
             if count >= num_samples_to_fit:
                 if cur_label != y:
                     count = 0
@@ -103,7 +103,8 @@ class FeatureExtractor(object):
             count += 1
 
             if count == num_samples_to_fit:
-                print("Built centroids for", y)
+                None
+                # print("Built centroids for", y)
 
             cur_label = y
             x = resize_to_size(x, 150)
@@ -119,10 +120,10 @@ class FeatureExtractor(object):
         return Quantizer().get_feature_vector(img, kmeans, centroids) 
  
  
-def extract_feature_map(X, Y, kmeans, centroids): 
+def extract_feature_map(data, target, kmeans, centroids): 
     feature_map = [] 
     
-    for x, y in zip(X, Y):
+    for x, y in zip(data, target):
         temp_dict = {} 
         temp_dict['label'] = y
         
