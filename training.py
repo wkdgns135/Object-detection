@@ -8,13 +8,14 @@ from sklearn import preprocessing
  
 # To train the classifier 
 class ClassifierTrainer(object): 
-    def __init__(self, X, label_words): 
+    def __init__(self, X, label_words, C): 
         # Encoding the labels (words to numbers) 
         self.le = preprocessing.LabelEncoder() 
  
-        # Initialize One vs One Classifier using a linear kernel 
-        self.clf = OneVsOneClassifier(LinearSVC(random_state=0)) 
- 
+        # Initialize One vs One Classifier using a linear kernel
+        self.clf = OneVsOneClassifier(LinearSVC(random_state=0, C=C)) 
+        LinearSVC().set_params
+
         y = self._encodeLabels(label_words) 
         X = np.asarray(X) 
         self.clf.fit(X, y) 
