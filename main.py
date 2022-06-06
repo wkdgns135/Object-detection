@@ -1,6 +1,18 @@
 import pandas as pd
 from obejct_classifier import *
 
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from catboost import CatBoostClassifier
+from lightgbm import LGBMClassifier,plot_importance
+from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import StackingClassifier
+
+
 def train_test_split(categories, n = 30):
     train_x = []
     train_y = []
@@ -27,9 +39,12 @@ if __name__ == "__main__":
 
     train_x, test_x, train_y, test_y = train_test_split(categories, n=30)
     
-    oc = object_classifier(C=1)
+    
+    model = DecisionTreeClassifier()
+    oc = object_classifier(model)
     oc.fit(train_x, train_y)
-    print(oc.get_params())
+    print(oc.score(test_x, test_y))
+
     # for c in range(1,100):
     #     oc.fit(train_x, train_y)
     #     # print(oc.predict(test_x[66]))

@@ -2,20 +2,18 @@ import os
 import sys 
 import argparse 
 import numpy as np 
-from sklearn.multiclass import OneVsOneClassifier 
-from sklearn.svm import LinearSVC 
+from sklearn.multiclass import OneVsRestClassifier 
 from sklearn import preprocessing 
  
 # To train the classifier 
 class ClassifierTrainer(object): 
-    def __init__(self, X, label_words, C): 
+    def __init__(self, X, label_words, estimator): 
         # Encoding the labels (words to numbers) 
-        self.le = preprocessing.LabelEncoder() 
- 
+        self.le = preprocessing.LabelEncoder()
+    
         # Initialize One vs One Classifier using a linear kernel
-        self.clf = OneVsOneClassifier(LinearSVC(random_state=0, C=C)) 
-        LinearSVC().set_params
-
+        self.clf = OneVsRestClassifier(estimator) 
+        
         y = self._encodeLabels(label_words) 
         X = np.asarray(X) 
         self.clf.fit(X, y) 
@@ -28,8 +26,7 @@ class ClassifierTrainer(object):
     # Encode the labels (convert words to numbers) 
     def _encodeLabels(self, labels_words): 
         self.le.fit(labels_words) 
-        return np.array(self.le.transform(labels_words), 
-         dtype=np.float32) 
+        return np.array(self.le.transform(labels_words), dtype=np.float32) 
  
     # Classify the input datapoint 
     def classify(self, X): 

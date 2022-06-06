@@ -3,13 +3,12 @@ from training import *
 from classify_data import *
 
 class object_classifier():
-    def __init__(self, C=1):
+    def __init__(self, estimator):
         self.kmeans = None
         self.centroids = None
         self.svm = None
-
+        self.estimator = estimator
         # hyperparameters
-        self.C = C
 
     def fit(self, data, target):
         
@@ -22,7 +21,7 @@ class object_classifier():
     
         X = [np.reshape(x['feature_vector'], (dim_size,)) for x in feature_map] 
         
-        self.svm = ClassifierTrainer(X, labels_words, self.C) 
+        self.svm = ClassifierTrainer(X, labels_words, self.estimator) 
 
     def predict(self, input):
         tag = ImageClassifier(self.svm, self.kmeans, self.centroids).getImageTag(input)
