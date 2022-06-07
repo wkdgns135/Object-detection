@@ -1,6 +1,6 @@
 import pandas as pd
-from obejct_classifier import *
-from sklearn.model_selection import train_test_split
+from create_features import *
+# from sklearn.model_selection import train_test_split
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -14,6 +14,8 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.ensemble import StackingClassifier
 from sklearn.multiclass import OneVsOneClassifier
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn.model_selection import GridSearchCV
+
 
 def data_import(categories):
     data = []
@@ -36,7 +38,7 @@ def data_processing(data):
 
     x = [np.reshape(x['feature_vector'], (dim_size,)) for x in feature_map] 
 
-    return x, kmeans, centroids
+    return x
 
 def train_test_split(data, target, n = 30):
     train_x = []
@@ -59,25 +61,33 @@ def train_test_split(data, target, n = 30):
 
     return train_x, test_x, train_y, test_y
 
+def hyperparameter_tuning(data, target):
+    model_to_set = OneVsRestClassifier(svm.SVC())
+
+    kernel = ['linear','rbf','poly']
+    C=[1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
+    gamma = [round(0.1*i,1) for i in range(1, 11)]
+    params = {'estimator__kernel':kernel, 'estimator__C':C, 'estimator__gamma':gamma}
+    gs = GridSearchCV(estimator=model_to_set, param_grid=params, n_jobs=-1, cv=3)
+    gs.fit(data, target)
+    
+    print(gs.cv_results_)
+    print(gs.best_params_)
+    print(gs.best_score_)
+
+    return gs.best_params_
+
 
 if __name__ == "__main__":
     categories = ["accordion", "chair", "bass","crab","emu"]
     data, target = data_import(categories=categories)
 
-    data, kmeans, centroids = data_processing(data)
+    data = data_processing(data)
     train_x, test_x, train_y, test_y = train_test_split(data, target)
-    
-    model = OneVsRestClassifier(svm.SVC(kernel='rbf'))
-    oc = object_classifier(model, kmeans=kmeans, centorids=centroids)
 
-    oc.fit(train_x, train_y)
-    
-    print(oc.predict(test_x))
-    print(oc.score(train_x, train_y))
-    print(oc.score(test_x, test_y))
+    best_params = hyperparameter_tuning(data, target)
+    # best_params = {'C': 1000, 'gamma': 0.1, 'kernel': 'rbf'}
 
-    # for c in range(1,100):
-    #     oc.fit(train_x, train_y)
-    #     # print(oc.predict(test_x[66]))
-    #     print(c,oc.score(test_x, test_y))
-        
+    # best_model = OneVsRestClassifier(svm.SVC(**best_params))
+    # best_model.fit(train_x, train_y)
+    # print(best_model.score(test_x, test_y))
