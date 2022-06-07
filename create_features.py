@@ -120,19 +120,15 @@ class FeatureExtractor(object):
         return Quantizer().get_feature_vector(img, kmeans, centroids) 
  
  
-def extract_feature_map(data, target, kmeans, centroids): 
-    feature_map = [] 
-    
-    for x, y in zip(data, target):
-        temp_dict = {} 
-        temp_dict['label'] = y
-        
+def extract_feature_map(data, kmeans, centroids): 
+    features = []
+    for x in data:
+        temp_dict = {}
         x = resize_to_size(x, 150)
-
         temp_dict['feature_vector'] = FeatureExtractor().get_feature_vector(x, kmeans, centroids) 
         if temp_dict['feature_vector'] is not None: 
-            feature_map.append(temp_dict) 
-    return feature_map 
+            features.append(temp_dict) 
+    return features 
  
 # Resize the shorter dimension to 'new_size' 
 # while maintaining the aspect ratio 
