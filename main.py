@@ -38,7 +38,7 @@ def data_processing(data):
 
     x = [np.reshape(x['feature_vector'], (dim_size,)) for x in feature_map] 
 
-    return x
+    return x, kmeans, centroids
 
 def train_test_split(data, target, n = 30):
     train_x = []
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     categories = ["accordion", "chair", "bass","crab","emu"]
     data, target = data_import(categories=categories)
 
-    data = data_processing(data)
+    data , kmeans, centroids = data_processing(data)
     train_x, test_x, train_y, test_y = train_test_split(data, target)
 
     best_params = hyperparameter_tuning(data, target)
