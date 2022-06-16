@@ -7,41 +7,26 @@ import cv2
 import numpy as np 
 from sklearn.cluster import KMeans 
 
-class DenseDetector(): 
-    def __init__(self, step_size=20, feature_scale=20, img_bound=20): 
-        # Create a dense feature detector 
-        self.initXyStep = step_size
-        self.initFeatureScale = feature_scale
-        self.initImgBound = img_bound
- 
-    def detect(self, img):
-        keypoints = []
-        rows, cols = img.shape[:2]
-        for x in range(self.initImgBound, rows, self.initFeatureScale):
-            for y in range(self.initImgBound, cols, self.initFeatureScale):
-                keypoints.append(cv2.KeyPoint(float(x), float(y), self.initXyStep))
-        return keypoints 
-
 class SIFTExtractor():
     def __init__(self):
-        self.extractor = cv2.xfeatures2d.SIFT_create(sigma=1)
+        self.extractor = cv2.xfeatures2d.SIFT_create(sigma = 1)
 
-    def compute(self, image, kps): 
+    def compute(self, image): 
         if image is None: 
             print("Not a valid image")
             raise TypeError 
  
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
-        kps, des = self.extractor.detectAndCompute(gray_image, None) 
-        return kps, des 
+        kps, des = self.extractor.detectAndCompute(gray_image, None)
+        return kps, des
 
 # Vector quantization 
 class Quantizer(object): 
-    def __init__(self, num_clusters=512): 
+    def __init__(self, num_clusters=1024): 
         self.num_dims = 128 
         self.extractor = SIFTExtractor() 
         self.num_clusters = num_clusters 
-        self.num_retries = 10 
+        self.num_retries = 10
  
     def quantize(self, datapoints): 
         # Create KMeans object 
@@ -66,8 +51,7 @@ class Quantizer(object):
  
     # Extract feature vector from the image 
     def get_feature_vector(self, img, kmeans, centroids): 
-        kps = DenseDetector().detect(img) 
-        kps, fvs = self.extractor.compute(img, kps) 
+        kps, fvs = self.extractor.compute(img) 
         fvs = np.array(fvs, dtype=np.double)
         labels = kmeans.predict(fvs) 
         fv = np.zeros(self.num_clusters) 
@@ -81,11 +65,8 @@ class Quantizer(object):
 
 class FeatureExtractor(object): 
     def extract_image_features(self, img): 
-        # Dense feature detector 
-        kps = DenseDetector().detect(img) 
- 
         # SIFT feature extractor 
-        kps, fvs = SIFTExtractor().compute(img, kps) 
+        kps, fvs = SIFTExtractor().compute(img) 
  
         return fvs 
  
