@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-# without dense detector
-from create_features_2 import *
 
 # with dense detector
-# from create_features import *
+from create_features import *
 
 # from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.multiclass import OneVsOneClassifier
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.model_selection import GridSearchCV
-
 
 def data_import():
     train_x = []
@@ -61,10 +58,9 @@ def hyperparameter_tuning(data, target):
 
     kernel = ['linear','rbf','poly']
     C= [1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
-    # gamma = [round(0.1*i,1) for i in range(1, 11)]
     gamma = [1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
     params = {'estimator__kernel':kernel, 'estimator__C':C, 'estimator__gamma':gamma}
-    gs = GridSearchCV(estimator=model_to_set, param_grid=params, n_jobs=-1, cv=3)
+    gs = GridSearchCV(estimator=model_to_set, param_grid=params, n_jobs=-1)
     gs.fit(data, target)
     
     # print(gs.cv_results_)
@@ -85,16 +81,26 @@ def score(pred, target, categories):
         print(category+" class는 20개중 ",score,"개 맞추었으며 score는 ",(score / 20),"입니다.")
 
 if __name__ == "__main__":
+    # Data 폴더의 Train, Test 폴더에서 카테고리별로 파일을 읽어와 
+    # 학습용 데이터, 학습용 타겟, 테스트용 데이터, 테스트용 타겟 총 4개의 배열을 리턴한다.
+    # 타겟은 라벨링이 필요없도록 넘버링을 하여 리턴하고 카테고리를 따로 추출하여 스코어를 산출할때 사용한다.
     train_x, test_x, train_y, test_y, categories = data_import()
+
+    # 읽어온 데이터의 특징벡터를 추출한다. 
+    # 학습용 데이터의 특징벡터를 추출할때 사용된 kmeans 클러스터링 모델과 centroids를 추출하여
+    # 테스트 데이터의 특징벡터를 추출할때 사용한다.
     train_x , kmeans, centroids = data_processing(train_x, train_y)
     test_x = data_processing(test_x, kmeans=kmeans, centroids=centroids)
 
-    best_model = hyperparameter_tuning(train_x, train_y)
+    # SVC의 하이퍼파라미터를 튜닝한다. GridSeachSV를 사용하여 best_estimator를 찾은 뒤 리턴하여 모델에 할당한다.
+    model = hyperparameter_tuning(train_x, train_y)
     # best_params ={'C': 1, 'gamma': 100, 'kernel': 'rbf'}
-    # best_model = OneVsRestClassifier(svm.SVC(**best_params))
+    # model = OneVsOneClassifier(svm.SVC(kernel='linear'))
 
-    best_model.fit(train_x, train_y)
+    model.fit(train_x, train_y)
     
-    pred = best_model.predict(test_x)
+    pred = model.predict(test_x)
+
+    # 테스트용 데이터를 모델이 예측한 배열을 테스트용 타겟과 비교하여 카테고리별로 스코어를 산출한다.
     score(pred, test_y, categories)
-    print("전체 스코어:", best_model.score(test_x, test_y))
+    print("전체 스코어:", model.score(test_x, test_y))

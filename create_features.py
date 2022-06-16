@@ -24,12 +24,12 @@ class DenseDetector():
 
 class SIFTExtractor():
     def __init__(self):
-        self.extractor = cv2.xfeatures2d.SIFT_create(sigma=1)
+        self.extractor = cv2.xfeatures2d.SIFT_create(sigma = 1.3)
 
     def compute(self, image, kps): 
         if image is None: 
             print("Not a valid image")
-            raise TypeError 
+            raise TypeError
  
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
         kps, des = self.extractor.detectAndCompute(gray_image, None) 
@@ -37,10 +37,10 @@ class SIFTExtractor():
 
 # Vector quantization 
 class Quantizer(object): 
-    def __init__(self, num_clusters=512): 
+    def __init__(self, num_clusters=1024): 
         self.num_dims = 128 
         self.extractor = SIFTExtractor() 
-        self.num_clusters = num_clusters 
+        self.num_clusters = num_clusters
         self.num_retries = 10 
  
     def quantize(self, datapoints): 
