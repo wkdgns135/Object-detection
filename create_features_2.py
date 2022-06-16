@@ -9,7 +9,11 @@ from sklearn.cluster import KMeans
 
 class SIFTExtractor():
     def __init__(self):
-        self.extractor = cv2.xfeatures2d.SIFT_create(sigma = 0.5)
+        # TODO 아래 파라미터 수정해가면서 최적의 스코어 찾기
+        # contrastThreshold = 0.04 default
+        # edgeThreshold = 10
+        # sigma = 1.6
+        self.extractor = cv2.xfeatures2d.SIFT_create(contrastThreshold =0.04,edgeThreshold = 10, sigma = 1.6)
 
     def compute(self, image): 
         if image is None: 
@@ -22,6 +26,7 @@ class SIFTExtractor():
 
 # Vector quantization 
 class Quantizer(object): 
+    # TODO 아래 클러스터 개수 수정해가면서 최적의 파라미터 찾기 범위 32~1024 2배씩 불려서
     def __init__(self, num_clusters=512): 
         self.num_dims = 128 
         self.extractor = SIFTExtractor() 

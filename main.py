@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+# without dense detector
 from create_features_2 import *
-# from sklearn.model_selection import train_test_split
 
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
+# with dense detector
+# from create_features import *
+
+# from sklearn.model_selection import train_test_split
 from sklearn import svm
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from catboost import CatBoostClassifier
-from lightgbm import LGBMClassifier,plot_importance
-from sklearn.ensemble import VotingClassifier
-from sklearn.ensemble import StackingClassifier
 from sklearn.multiclass import OneVsOneClassifier
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.model_selection import GridSearchCV
@@ -65,7 +60,7 @@ def hyperparameter_tuning(data, target):
     model_to_set = OneVsRestClassifier(svm.SVC())
 
     kernel = ['linear','rbf','poly']
-    C=[1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
+    C= [1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
     # gamma = [round(0.1*i,1) for i in range(1, 11)]
     gamma = [1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
     params = {'estimator__kernel':kernel, 'estimator__C':C, 'estimator__gamma':gamma}
