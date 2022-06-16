@@ -9,7 +9,7 @@ from sklearn.cluster import KMeans
 
 class SIFTExtractor():
     def __init__(self):
-        self.extractor = cv2.xfeatures2d.SIFT_create(sigma = 1)
+        self.extractor = cv2.xfeatures2d.SIFT_create(sigma = 0.5)
 
     def compute(self, image): 
         if image is None: 
@@ -22,7 +22,7 @@ class SIFTExtractor():
 
 # Vector quantization 
 class Quantizer(object): 
-    def __init__(self, num_clusters=1024): 
+    def __init__(self, num_clusters=512): 
         self.num_dims = 128 
         self.extractor = SIFTExtractor() 
         self.num_clusters = num_clusters 
