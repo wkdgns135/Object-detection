@@ -24,7 +24,7 @@ class DenseDetector():
 
 class SIFTExtractor():
     def __init__(self):
-        self.extractor = cv2.xfeatures2d.SIFT_create(sigma = 1.3)
+        self.extractor = cv2.xfeatures2d.SIFT_create(contrastThreshold =0.01,edgeThreshold = 16, sigma = 1.3)
 
     def compute(self, image, kps): 
         if image is None: 
@@ -37,7 +37,7 @@ class SIFTExtractor():
 
 # Vector quantization 
 class Quantizer(object): 
-    def __init__(self, num_clusters=1024): 
+    def __init__(self, num_clusters=512): 
         self.num_dims = 128 
         self.extractor = SIFTExtractor() 
         self.num_clusters = num_clusters

@@ -18,7 +18,7 @@ def data_import():
     categories =[]
 
     index = 0
-    train_dir_name = 'Data/Train/'
+    train_dir_name = 'Data/Test/'
     for dirname in os.listdir(train_dir_name):
         categories.append(dirname)
         img_dir_name = train_dir_name + dirname
@@ -29,7 +29,7 @@ def data_import():
         index+=1
 
     index = 0
-    test_dir_name = 'Data/Test/'
+    test_dir_name = 'Data/Train/'
     for dirname in os.listdir(test_dir_name):
         img_dir_name = test_dir_name + dirname
         for fname in os.listdir(img_dir_name):
@@ -57,8 +57,8 @@ def hyperparameter_tuning(data, target):
     model_to_set = OneVsRestClassifier(svm.SVC())
 
     kernel = ['linear','rbf','poly']
-    C= [1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
-    gamma = [1, 10, 30, 100, 300, 1000, 3000, 10000, 30000]
+    C= range(1, 100)
+    gamma = range(1, 100)
     params = {'estimator__kernel':kernel, 'estimator__C':C, 'estimator__gamma':gamma}
     gs = GridSearchCV(estimator=model_to_set, param_grid=params, n_jobs=-1)
     gs.fit(data, target)
@@ -92,10 +92,12 @@ if __name__ == "__main__":
     train_x , kmeans, centroids = data_processing(train_x, train_y)
     test_x = data_processing(test_x, kmeans=kmeans, centroids=centroids)
 
-    # SVC의 하이퍼파라미터를 튜닝한다. GridSeachSV를 사용하여 best_estimator를 찾은 뒤 리턴하여 모델에 할당한다.
-    model = hyperparameter_tuning(train_x, train_y)
-    # best_params ={'C': 1, 'gamma': 100, 'kernel': 'rbf'}
-    # model = OneVsOneClassifier(svm.SVC(kernel='linear'))
+    # SVC의 하이퍼파라미터를 튜닝한다. GridSeachSV를 사용하여 best_params를 찾은 뒤 리턴하여 모델에 할당한다.
+    # model = hyperparameter_tuning(train_x, train_y)
+    
+    # Best params
+    best_params ={'C': 1, 'gamma': 90, 'kernel': 'poly'}
+    model = OneVsRestClassifier(svm.SVC(**best_params))
 
     model.fit(train_x, train_y)
     
@@ -104,3 +106,5 @@ if __name__ == "__main__":
     # 테스트용 데이터를 모델이 예측한 배열을 테스트용 타겟과 비교하여 카테고리별로 스코어를 산출한다.
     score(pred, test_y, categories)
     print("전체 스코어:", model.score(test_x, test_y))
+
+    # 스코어 평균 85%
